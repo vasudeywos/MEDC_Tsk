@@ -24,7 +24,15 @@
               <li class="list-group-item"><strong>Name:</strong> {{ user.profile.name }}</li>
               <li class="list-group-item"><strong>Gender:</strong> {{ user.profile.get_gender_display }}</li>
               <li class="list-group-item"><strong>History of Illness:</strong> {{ user.profile.history_of_illness }}</li>
-              <li class="list-group-item"><strong>Prescriptions:</strong> {{ user.profile.prescriptions }}</li>
+              <li class="list-group-item"><strong>Prescriptions:</strong>
+                <ul>
+                  {% for prescription in user.profile.prescriptions.all %}
+                    <li>{{ prescription }}</li>
+                  {% empty %}
+                    <li>No prescriptions found.</li>
+                  {% endfor %}
+                </ul>
+              </li>
             </ul>
           </div>
         </div>
@@ -49,9 +57,13 @@
                   <strong>Description:</strong> {{ appointment.description }}<br>
                   <strong>Doctor Appointed:</strong> {{ appointment.Doctors_for_appnt.name }}<br>
                   <strong>Appointment Time:</strong> {{ appointment.appointment_time}}<br>
-                  <strong>Bill:</strong> {{ bills.amount}}<br>
+                  <strong>Bill:</strong>{% if appointment.appoints %}
+                                                {{ appointment.appoints.amount }}
+                                        {% else %} N/A
+                                        {% endif %}
+                                      <br>
                   {% if appointment.Prescription %}
-                    <strong>Appointment Paid:</strong> {{ appointment.Pay_amount}}<br>
+                    <strong>Appointment Paid:</strong> {{ appointment.amount}}<br>
                   {% endif %}
                   <strong>Prescription Download:</strong> <a href="{% url 'download' appointment.id %}">{{ appointment.Prescription}}<br></a>
                 </li>
@@ -64,4 +76,27 @@
       </div>
     </div>
   </div>
+<div class="chat-box">
+    <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title"> Chat with Our Staff</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a class="btn btn-primary" href="{% url 'room' profile.name %}">Chat</a>
+  </div>
+</div>
+  </div>
+
+  <style>
+    .chat-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #fff;
+      width: 300px;
+      height: 400px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+
 {% endblock %}

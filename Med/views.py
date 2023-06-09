@@ -12,6 +12,7 @@ from django.views.generic import ListView,DetailView,CreateView,UpdateView,Delet
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 
 @login_required
 def createappointment(request):
@@ -60,6 +61,8 @@ def updtappointment(request, pk):
             return redirect('patient_pg')
         if form.is_valid() and request.user.is_staff:
             form.save()
+            if appointment.Prescription:
+                info.prescriptions.add(appointment.Prescription)
             return redirect('staff_pg')
     else:
         form = AppointmentUpdateForm(instance=appointment)
@@ -143,6 +146,7 @@ def download(request, presc_id):
     return response
 
 
+
 def Createbill(request, appnt_id):
     appointment = get_object_or_404(Appointment, pk=appnt_id)
 
@@ -151,7 +155,12 @@ def Createbill(request, appnt_id):
         if form.is_valid():
             bill = form.save(commit=False)
             bill.appointment = appointment
-            bill.save()
+            bill.amount = appointment.Pay_amount
+            try:
+                bill.save()
+            except IntegrityError:
+                form.add_error(None, "A bill already exists for this appointment.")
+                return render(request, 'Med/createbill.html', {'form': form, 'appointment': appointment})
             return redirect('staff_pg')
     else:
         form = BillForm()
@@ -163,9 +172,17 @@ def Createbill(request, appnt_id):
 
     return render(request, 'Med/createbill.html', context)
 
+
 def all_Bills(request):
     bills = Bill.objects.all()
     context = {
         'bills': bills
     }
     return render(request,'Med/allbills.html',context )
+
+def PatientListView(request):
+    patients = Profile.objects.filter(user__is_patient=True)
+    context = {
+        'patients': patients
+    }
+    return render(request, 'Med/patientlist.html', context)

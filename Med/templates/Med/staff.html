@@ -1,6 +1,7 @@
 {% extends 'Med/main.html' %}
 {% block SHead %}
   <a href="{% url 'doc_list' %}" class="btn btn-primary btn-dark">View Doctors</a>
+  <a href="{% url 'patient_list' %}" class="btn btn-primary btn-dark">View Patients</a>
   <a href="{% url 'allbill' %}" class="btn btn-primary btn-dark">Accounts</a>
 <a href="{% url 'doc-create' %}" class="btn btn-primary btn-dark" style="position: fixed; top: 70px; right: 20px;">Add Doctor</a>
   <div class="d-flex justify-content-end">
