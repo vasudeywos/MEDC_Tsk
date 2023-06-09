@@ -30,13 +30,15 @@ class PatientProf(TemplateView):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
+        profile=Profile.objects.get(user=user)
         context = super().get_context_data(**kwargs)
         appointments = Appointment.objects.filter(patient=user)
-        bills=Bill.objects.get(appointment__in=appointments)
+        bills=Bill.objects.filter(appointment__in=appointments)
         doctors = Doctor_Profiles.objects.filter(appointments__in=appointments)
         context['doctors'] = doctors
         context['user'] = user
         context['bills'] = bills
+        context['profile'] = profile
         context['appointemnts']=appointments
         return context
 

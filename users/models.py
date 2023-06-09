@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+
 class User(AbstractUser):
     is_patient = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -23,7 +24,7 @@ class Profile(models.Model):
     history_of_illness = models.TextField(blank=True, null=True)
     name = models.CharField(max_length=200)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    prescriptions = models.TextField(blank=True, null=True)
+    prescriptions = models.ManyToManyField('Med.Prescription', related_name='profiles', blank=True)
 
     def __str__(self):
         return self.name

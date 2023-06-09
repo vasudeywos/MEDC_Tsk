@@ -17,7 +17,8 @@
             <ul class="list-group list-group-flush">
               {% for patient in patients %}
                 <li class="list-group-item">
-                  <a class="btn btn-secondary btn-sm mt-2 mb-2" href="{% url 'room' patient.name %}"><strong>Name:</strong> {{ patient.name }}</a><br>
+                  <a class="btn btn-secondary btn-sm mt-2 mb-2" href="{% url 'room' patient.user.username %}">Chat With Patient</a><br>
+                    <strong>Name:</strong> {{ patient.name }}
                     <strong>Gender:</strong> {{ patient.get_gender_display }}
                     <strong>History of Illness:</strong> {{ patient.history_of_illness }}
                     <strong>Prescriptions:</strong>

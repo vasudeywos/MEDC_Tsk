@@ -5,12 +5,10 @@ from asgiref.sync import async_to_sync, sync_to_async
 from .models import Message
 from users.models import User
 
-def index(request):
-    return render(request, "chat/index.html")
 
 def room(request, room_name):
     # Fetch messages related to the chat room
-    messages = Message.objects.all()
+    messages = Message.objects.filter(room_name=room_name)
     return render(request, "chat/room.html", {"room_name": room_name, "messages": messages})
 
 
@@ -35,7 +33,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["message"]
 
         member = await sync_to_async(User.objects.get)(username=username)
-        await sync_to_async(Message.objects.create)(author=member, content=message)
+        await sync_to_async(Message.objects.create)(
+            room_name=self.room_name, author=member, content=message
+        )
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -49,3 +49,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message, "username": username}))
+
